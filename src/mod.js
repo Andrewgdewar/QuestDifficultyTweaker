@@ -7,8 +7,13 @@ const config_json_1 = require("../config/config.json");
 const GlobalChanges_1 = __importDefault(require("./Changers/GlobalChanges"));
 class QuestDifficultyTweaker {
     postSptLoad(container) {
-        if (config_json_1.enable)
-            (0, GlobalChanges_1.default)(container);
+        try {
+            if (config_json_1.enable)
+                (0, GlobalChanges_1.default)(container);
+        }
+        catch (error) {
+            console.error(error);
+        }
     }
 }
 module.exports = { mod: new QuestDifficultyTweaker() };

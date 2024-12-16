@@ -6,7 +6,11 @@ import GlobalChanges from "./Changers/GlobalChanges";
 
 class QuestDifficultyTweaker implements IPostSptLoadMod {
   postSptLoad(container: DependencyContainer): void {
-    if (enable) GlobalChanges(container);
+    try {
+      if (enable) GlobalChanges(container);
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
 
