@@ -15,7 +15,9 @@ function GlobalChanges(container) {
     const items = tables.templates.items;
     const quests = tables.templates.quests;
     const { languages, global } = tables.locales;
-    let gunsmithCount = 0;
+    // const gunsmithQuests = [];
+    // const gunsmithQuestsAfter = [];
+    // let gunsmithCount = 0;
     Object.keys(quests).forEach((questId) => {
         const currentQuest = quests[questId];
         let currentQuestLevel = 1;
@@ -69,12 +71,13 @@ function GlobalChanges(container) {
         }
         if (config_json_1.default.replaceGunsmith &&
             currentQuest.type === QuestTypeEnum_1.QuestTypeEnum.WEAPON_ASSEMBLY) {
-            gunsmithCount++;
+            // gunsmithQuests.push(cloneDeep(currentQuest));
+            // gunsmithCount++;
             const languageList = Object.keys(languages);
             currentQuest.type = QuestTypeEnum_1.QuestTypeEnum.ELIMINATION;
             const killQuest = (0, utils_1.getKillQuestForGunsmith)((0, utils_1.getNumbersFromString)(currentQuest.QuestName));
-            const descriptionId = currentQuest._id + " questTweakerDescription";
-            const taskId = currentQuest._id + " questTweakerTask";
+            const descriptionId = (0, utils_1.getNewMongoId)(items);
+            const taskId = (0, utils_1.getNewMongoId)(items);
             killQuest.id = taskId;
             currentQuest.description = descriptionId;
             if (typeof currentQuest.conditions.AvailableForFinish[0].target === "string") {
@@ -111,6 +114,7 @@ function GlobalChanges(container) {
                 });
             }
             currentQuest.conditions.AvailableForFinish = [killQuest];
+            // gunsmithQuestsAfter.push(currentQuest);
         }
         if (currentQuest?.rewards?.Success?.length) {
             currentQuest.rewards.Success.forEach((item, key) => {
@@ -121,7 +125,7 @@ function GlobalChanges(container) {
                         if (item?.value && Number(item.value) > 0)
                             currentQuest.rewards.Success[key] = {
                                 ...item,
-                                value: (Math.round(Number(item.value) * config_json_1.default.questExperienceModifier) || 1).toString(),
+                                value: Math.round(Number(item.value) * config_json_1.default.questExperienceModifier) || 1,
                             };
                         break;
                     case QuestRewardType_1.QuestRewardType.ITEM:
@@ -133,8 +137,9 @@ function GlobalChanges(container) {
                             case Number(item.value) === 1:
                                 break;
                             default:
-                                item.value = (Math.round(Number(item.value) * config_json_1.default.itemRewardModifier) ||
-                                    1).toString();
+                                item.value =
+                                    Math.round(Number(item.value) * config_json_1.default.itemRewardModifier) ||
+                                        1;
                                 item.items[0].upd.StackObjectsCount =
                                     Math.round(Number(item.items[0].upd.StackObjectsCount) *
                                         config_json_1.default.itemRewardModifier) || 1;
@@ -146,10 +151,11 @@ function GlobalChanges(container) {
                             break;
                         }
                         // console.log("\n" + item.value + " -");
-                        item.value = (Math.round((Number(item.value) / 0.05) *
-                            config_json_1.default.traderStandingRewardModifier *
-                            0.05 *
-                            100) / 100).toString();
+                        item.value =
+                            Math.round((Number(item.value) / 0.05) *
+                                config_json_1.default.traderStandingRewardModifier *
+                                0.05 *
+                                100) / 100;
                         // console.log(item.value);
                         break;
                     default:
@@ -158,7 +164,8 @@ function GlobalChanges(container) {
             });
         }
     });
-    // saveToFile(quests, "refDBS/quests1.json");
+    // saveToFile(gunsmithQuestsAfter, "refDBS/gunsmithBefore.json");
+    // saveToFile(gunsmithQuestsAfter, "refDBS/gunsmithAfter.json");
     config_json_1.default.debug && console.log("QuestDifficultyTweaker - Changes Complete");
 }
 //# sourceMappingURL=GlobalChanges.js.map

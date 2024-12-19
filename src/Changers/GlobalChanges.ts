@@ -3,7 +3,9 @@ import config from "../../config/config.json";
 import localeConfig from "../../config/localeConfig.json";
 import { DatabaseServer } from "@spt/servers/DatabaseServer";
 import {
+  cloneDeep,
   getKillQuestForGunsmith,
+  getNewMongoId,
   getNumbersFromString,
   saveToFile,
 } from "../Utils/utils";
@@ -20,7 +22,9 @@ export default function GlobalChanges(
   const quests = tables.templates.quests as unknown as Record<string, IQuest>;
 
   const { languages, global } = tables.locales;
-  let gunsmithCount = 0;
+  // const gunsmithQuests = [];
+  // const gunsmithQuestsAfter = [];
+  // let gunsmithCount = 0;
   Object.keys(quests).forEach((questId) => {
     const currentQuest = quests[questId];
     let currentQuestLevel = 1;
@@ -88,7 +92,8 @@ export default function GlobalChanges(
       config.replaceGunsmith &&
       currentQuest.type === QuestTypeEnum.WEAPON_ASSEMBLY
     ) {
-      gunsmithCount++;
+      // gunsmithQuests.push(cloneDeep(currentQuest));
+      // gunsmithCount++;
       const languageList = Object.keys(languages);
       currentQuest.type = QuestTypeEnum.ELIMINATION;
 
@@ -96,8 +101,8 @@ export default function GlobalChanges(
         getNumbersFromString(currentQuest.QuestName)
       );
 
-      const descriptionId = currentQuest._id + " questTweakerDescription";
-      const taskId = currentQuest._id + " questTweakerTask";
+      const descriptionId = getNewMongoId(items);
+      const taskId = getNewMongoId(items);
 
       killQuest.id = taskId;
       currentQuest.description = descriptionId;
@@ -166,6 +171,7 @@ export default function GlobalChanges(
       }
 
       currentQuest.conditions.AvailableForFinish = [killQuest];
+      // gunsmithQuestsAfter.push(currentQuest);
     }
 
     if (currentQuest?.rewards?.Success?.length) {
@@ -176,11 +182,10 @@ export default function GlobalChanges(
             if (item?.value && Number(item.value) > 0)
               currentQuest.rewards.Success[key] = {
                 ...item,
-                value: (
+                value:
                   Math.round(
                     Number(item.value) * config.questExperienceModifier
-                  ) || 1
-                ).toString(),
+                  ) || 1,
               };
             break;
 
@@ -193,10 +198,9 @@ export default function GlobalChanges(
               case Number(item.value) === 1:
                 break;
               default:
-                item.value = (
+                item.value =
                   Math.round(Number(item.value) * config.itemRewardModifier) ||
-                  1
-                ).toString();
+                  1;
 
                 item.items[0].upd.StackObjectsCount =
                   Math.round(
@@ -211,14 +215,13 @@ export default function GlobalChanges(
               break;
             }
             // console.log("\n" + item.value + " -");
-            item.value = (
+            item.value =
               Math.round(
                 (Number(item.value) / 0.05) *
                   config.traderStandingRewardModifier *
                   0.05 *
                   100
-              ) / 100
-            ).toString();
+              ) / 100;
             // console.log(item.value);
             break;
 
@@ -229,7 +232,8 @@ export default function GlobalChanges(
     }
   });
 
-  // saveToFile(quests, "refDBS/quests1.json");
+  // saveToFile(gunsmithQuestsAfter, "refDBS/gunsmithBefore.json");
+  // saveToFile(gunsmithQuestsAfter, "refDBS/gunsmithAfter.json");
 
   config.debug && console.log("QuestDifficultyTweaker - Changes Complete");
 }
