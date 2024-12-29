@@ -1,11 +1,11 @@
 {
   "enable": true,
-  "questLevelUnlockModifier": 0.5,
-  "questExperienceModifier": 0.5,
+  "questLevelUnlockModifier": 0.7,
+  "questExperienceModifier": 0.7,
   "traderStandingRewardModifier": 1,
-  "itemRewardModifier": 0.5,
-  "killQuestCountModifier": 0.5,
-  "findItemQuestModifier": 0.5,
+  "itemRewardModifier": 0.7,
+  "killQuestCountModifier": 0.7,
+  "findItemQuestModifier": 0.7,
   "plantTimeModifier": 0.2,
   "replaceGunsmith": true,
   "debug": false
