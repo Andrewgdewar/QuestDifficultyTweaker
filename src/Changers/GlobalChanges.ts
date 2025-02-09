@@ -51,7 +51,7 @@ export default function GlobalChanges(
             currentQuest.conditions.AvailableForFinish[key].plantTime =
               Math.round(
                 currentQuest.conditions.AvailableForFinish[key].plantTime *
-                  config.plantTimeModifier
+                config.plantTimeModifier
               ) || 1;
             break;
           case "CounterCreator":
@@ -64,7 +64,7 @@ export default function GlobalChanges(
             currentQuest.conditions.AvailableForFinish[key].value =
               Math.round(
                 Number(currentQuest.conditions.AvailableForFinish[key].value) *
-                  config.killQuestCountModifier
+                config.killQuestCountModifier
               ) || 1;
           case "HandoverItem":
           case "FindItem":
@@ -80,7 +80,7 @@ export default function GlobalChanges(
             currentQuest.conditions.AvailableForFinish[key].value =
               Math.round(
                 Number(currentQuest.conditions.AvailableForFinish[key].value) *
-                  config.findItemQuestModifier
+                config.findItemQuestModifier
               ) || 1;
             break;
           default:
@@ -97,14 +97,17 @@ export default function GlobalChanges(
       const languageList = Object.keys(languages);
       currentQuest.type = QuestTypeEnum.ELIMINATION;
 
+      const currentQuestNumber = getNumbersFromString(currentQuest.QuestName)
+
       const killQuest = getKillQuestForGunsmith(
-        getNumbersFromString(currentQuest.QuestName)
+        currentQuestNumber
       );
 
-      const descriptionId = getNewMongoId(items);
-      const taskId = getNewMongoId(items);
 
-      killQuest.id = taskId;
+
+      const descriptionId = getNewMongoId(items);
+      const taskId = killQuest.id
+
       currentQuest.description = descriptionId;
 
       if (
@@ -122,15 +125,15 @@ export default function GlobalChanges(
           global[lang][descriptionId] = locale.description.replace(
             "<weapon>",
             global[lang][
-              currentQuest.conditions.AvailableForFinish[0].target as string
+            currentQuest.conditions.AvailableForFinish[0].target as string
             ]
           );
           global[lang][taskId] = locale.task
             .replace(
               "<weapon>",
               global[lang][
-                currentQuest.conditions.AvailableForFinish[0].target +
-                  " ShortName"
+              currentQuest.conditions.AvailableForFinish[0].target +
+              " ShortName"
               ]
             )
             .replace("<number>", killQuest.value + "");
@@ -151,19 +154,20 @@ export default function GlobalChanges(
           global[lang][descriptionId] = locale.description.replace(
             "<weapon>",
             global[lang][
-              currentQuest.conditions.AvailableForFinish[0].target[0] + " Name"
+            currentQuest.conditions.AvailableForFinish[0].target[0] + " Name"
             ]
           );
           global[lang][taskId] = locale.task
             .replace(
               "<weapon>",
               global[lang][
-                currentQuest.conditions.AvailableForFinish[0].target[0] +
-                  " ShortName"
+              currentQuest.conditions.AvailableForFinish[0].target[0] +
+              " ShortName"
               ]
             )
             .replace("<number>", killQuest.value + "");
           if (config.debug && lang === "en") {
+            console.log("Gunsmith number", currentQuestNumber)
             console.log(global[lang][descriptionId]);
             console.log(global[lang][taskId]);
           }
@@ -205,7 +209,7 @@ export default function GlobalChanges(
                 item.items[0].upd.StackObjectsCount =
                   Math.round(
                     Number(item.items[0].upd.StackObjectsCount) *
-                      config.itemRewardModifier
+                    config.itemRewardModifier
                   ) || 1;
                 break;
             }
@@ -218,9 +222,9 @@ export default function GlobalChanges(
             item.value =
               Math.round(
                 (Number(item.value) / 0.05) *
-                  config.traderStandingRewardModifier *
-                  0.05 *
-                  100
+                config.traderStandingRewardModifier *
+                0.05 *
+                100
               ) / 100;
             // console.log(item.value);
             break;
@@ -230,8 +234,8 @@ export default function GlobalChanges(
         }
       });
     }
-  });
-
+  });//67a8d5cf7aa8a5f2769bf66f
+  // console.log(gunsmithQuestsAfter[5].conditions.AvailableForFinish[0].counter.conditions[0])
   // saveToFile(gunsmithQuestsAfter, "refDBS/gunsmithBefore.json");
   // saveToFile(gunsmithQuestsAfter, "refDBS/gunsmithAfter.json");
 

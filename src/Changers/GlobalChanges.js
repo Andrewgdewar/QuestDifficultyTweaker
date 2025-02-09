@@ -75,10 +75,10 @@ function GlobalChanges(container) {
             // gunsmithCount++;
             const languageList = Object.keys(languages);
             currentQuest.type = QuestTypeEnum_1.QuestTypeEnum.ELIMINATION;
-            const killQuest = (0, utils_1.getKillQuestForGunsmith)((0, utils_1.getNumbersFromString)(currentQuest.QuestName));
+            const currentQuestNumber = (0, utils_1.getNumbersFromString)(currentQuest.QuestName);
+            const killQuest = (0, utils_1.getKillQuestForGunsmith)(currentQuestNumber);
             const descriptionId = (0, utils_1.getNewMongoId)(items);
-            const taskId = (0, utils_1.getNewMongoId)(items);
-            killQuest.id = taskId;
+            const taskId = killQuest.id;
             currentQuest.description = descriptionId;
             if (typeof currentQuest.conditions.AvailableForFinish[0].target === "string") {
                 killQuest.counter.conditions[0].weapon = [
@@ -108,6 +108,7 @@ function GlobalChanges(container) {
                         " ShortName"])
                         .replace("<number>", killQuest.value + "");
                     if (config_json_1.default.debug && lang === "en") {
+                        console.log("Gunsmith number", currentQuestNumber);
                         console.log(global[lang][descriptionId]);
                         console.log(global[lang][taskId]);
                     }
@@ -163,7 +164,8 @@ function GlobalChanges(container) {
                 }
             });
         }
-    });
+    }); //67a8d5cf7aa8a5f2769bf66f
+    // console.log(gunsmithQuestsAfter[5].conditions.AvailableForFinish[0].counter.conditions[0])
     // saveToFile(gunsmithQuestsAfter, "refDBS/gunsmithBefore.json");
     // saveToFile(gunsmithQuestsAfter, "refDBS/gunsmithAfter.json");
     config_json_1.default.debug && console.log("QuestDifficultyTweaker - Changes Complete");

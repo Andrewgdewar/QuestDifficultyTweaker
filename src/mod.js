@@ -10,6 +10,8 @@ class QuestDifficultyTweaker {
         try {
             if (config_json_1.enable)
                 (0, GlobalChanges_1.default)(container);
+            // const list = new Array(50).fill("").map(_ => getNewMongoId())
+            // saveToFile({ list }, "list.json")
         }
         catch (error) {
             console.error(error);
